@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  go-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.22
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y build-essential pkg-config libsqlite3-dev
+    - name: Tidy
+      run: go mod tidy
+    - name: Vet
+      run: go vet ./...
+    - name: Test
+      run: PEA_GEMINI_MOCK=true go test ./...
+
+  integration-mock:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.18
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y build-essential pkg-config libsqlite3-dev
+    - name: Tidy
+      run: go mod tidy
+    - name: Integration Test
+      run: PEA_GEMINI_MOCK=true go test ./tests/go/integration -v
