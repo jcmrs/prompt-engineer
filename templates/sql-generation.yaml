@@ -1,0 +1,15 @@
+id: "sql-generation"
+version: "1.0"
+created_at: "2024-01-01T00:00:00Z"
+author: "Jules"
+intent: "Generate SQL queries from natural language"
+description: "A template for generating SQL queries from a description of the desired data."
+model_preferences:
+  primary: "gemini-2.5-flash"
+  fallback: "gemini-2.5-pro"
+prompt_text: |
+  Generate a SQL query to {{.description}}.
+positive_examples:
+  - description: "select all users from the users table"
+    output: "SELECT * FROM users;"
+negative_examples: []
