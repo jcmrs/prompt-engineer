@@ -105,69 +105,55 @@ This section details the different roles to consider when constructing prompts f
 
 ## 7. Best Practices and Examples
 
-The following examples are inspired by the [Jules Awesome Prompts repository](https://github.com/google-labs-code/jules-awesome-list).
+### 7.1. Prompting for Feature Implementation
 
-### 7.1. Prompting for Refactoring
-
-**Objective:** Refactor a specific file to use a more modern language feature.
+**Objective:** Create a prompt that instructs Jules to add a new REST endpoint.
 
 ```markdown
-// Refactor the `api.js` file from callback-based code to use async/await.
+Your task is to implement a new `GET /api/v1/health` endpoint in the Go application.
 
-**Context:**
-- **File:** `src/lib/api.js`
-- **Current Pattern:** The file uses nested callbacks for asynchronous operations.
-- **Target Pattern:** Modern `async/await` syntax for better readability and error handling.
+**1. High-Level Goal:**
+Create a health check endpoint that returns a JSON response indicating the application's status.
 
-**Requirements:**
-1.  Identify all functions in `src/lib/api.js` that use callbacks.
-2.  Rewrite them using `async/await`.
-3.  Ensure that error handling is properly implemented using `try/catch` blocks.
-4.  Verify that all existing tests in `tests/test_api.js` continue to pass after the refactoring.
+**2. Technical Specifications:**
+- **File:** `internal/handlers/health.go` (create this file)
+- **Function Signature:** `func HealthHandler(w http.ResponseWriter, r *http.Request)`
+- **Response Body (Success):** `{"status": "ok"}`
+- **HTTP Status Code (Success):** `200 OK`
+- **Routing:** The new handler must be registered in `cmd/server/main.go` to handle the `/api/v1/health` route.
+
+**3. Testing Requirements:**
+- Create a new test file `internal/handlers/health_test.go`.
+- Add a unit test that calls the `HealthHandler` and asserts that the status code is `200` and the response body is `{"status": "ok"}`.
+- Use the `PEA_GEMINI_MOCK=true` environment variable when running tests.
+
+**4. Plan of Action:**
+Please create a plan that includes the following steps:
+1. Create the `internal/handlers/health.go` file with the `HealthHandler` function.
+2. Create the `internal/handlers/health_test.go` file with the unit test.
+3. Modify `cmd/server/main.go` to register the new route.
+4. Run the tests to verify the implementation.
+5. Complete the pre-commit steps.
+6. Submit the changes.
 ```
 
-### 7.2. Prompting for Documentation
+### 7.2. Prompting for Bug Fixes
 
-**Objective:** Generate documentation for a module.
+**Objective:** Create a prompt for fixing a bug.
 
 ```markdown
-// Generate Sphinx-style docstrings for the Python module `utils.py`.
+There is a bug in the `calculate_total` function where it panics if the input slice is empty.
 
-**Context:**
-- **File:** `src/utils.py`
-- **Task:** The file contains several utility functions without proper documentation.
+**1. Bug Description:**
+- **File:** `internal/util/calculator.go`
+- **Function:** `calculate_total(items []int) int`
+- **Problem:** When `items` is empty, the function accesses `items[0]`, causing a panic.
 
-**Requirements:**
-1.  For each function in `src/utils.py`, add a Sphinx-style docstring.
-2.  The docstring should include:
-    - A brief description of the function's purpose.
-    - Descriptions for all arguments (`:param:`).
-    - A description of the return value (`:return:`).
-3.  Ensure the generated docstrings are correctly formatted.
+**2. Expected Behavior:**
+If the input slice is empty, the function should return `0`.
+
+**3. Task:**
+1.  Modify the `calculate_total` function in `internal/util/calculator.go` to handle the empty slice case correctly.
+2.  Add a new unit test in `internal/util/calculator_test.go` that specifically tests the empty slice case.
+3.  Ensure all existing tests continue to pass.
 ```
-
-### 7.3. Prompting for Testing
-
-**Objective:** Add a new test suite to a repository.
-
-```markdown
-// Add a test suite for the user authentication flow.
-
-**Context:**
-The repository currently lacks test coverage for the user login and registration endpoints.
-
-**Requirements:**
-1.  Create a new test file `tests/test_auth.py`.
-2.  Using `pytest`, write integration tests for the following scenarios:
-    - Successful user registration.
-    - Registration with a duplicate email.
-    - Successful user login.
-    - Login with incorrect credentials.
-3.  Mock any external API calls (e.g., to a mail server).
-4.  Ensure the tests run successfully using the `PEA_GEMINI_MOCK=true go test ./...` command.
-```
-
-## 8. References
-
-*   **[Jules Official Documentation](https://jules.google/docs/)**: The primary source for information on Jules, its features, and how to use it.
-*   **[Jules Awesome Prompts](https://github.com/google-labs-code/jules-awesome-list)**: A curated list of effective prompts for a wide variety of development tasks.
