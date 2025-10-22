@@ -42,7 +42,7 @@ func InitDB() (*sql.DB, error) {
 			content TEXT,
 			attachments JSON,
 			model TEXT,
-			model_config TEXT,
+			model_config JSON,
 			prompt_version TEXT,
 			metadata JSON,
 			created_at TEXT
