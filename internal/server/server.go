@@ -87,7 +87,16 @@ func wsRunHandler(w http.ResponseWriter, r *http.Request) {
 			"chunk_index": idx,
 			"is_final":    isFinal,
 		}
-		jsonMsg, _ := json.Marshal(msg)
+		jsonMsg, err := json.Marshal(msg)
+		if err != nil {
+			errorMsg := map[string]interface{}{
+				"type":    "error",
+				"message": "Failed to marshal token message: " + err.Error(),
+			}
+			errorJson, _ := json.Marshal(errorMsg)
+			conn.WriteMessage(websocket.TextMessage, errorJson)
+			return
+		}
 		conn.WriteMessage(websocket.TextMessage, jsonMsg)
 	})
 
